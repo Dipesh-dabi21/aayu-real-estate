@@ -109,7 +109,11 @@ h1 em, h2 em { font-size: 1.12em; }
 
 /* ============ Header ============ */
 .site-header { position: fixed; inset: 0 0 auto 0; z-index: 100; transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease; }
-.site-header.solid { background: rgba(246, 242, 234, 0.94); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); }
+/* Blur lives on a pseudo-element: backdrop-filter on the header itself would trap the fixed mobile menu inside it. */
+.site-header::before { content: ''; position: absolute; inset: 0; z-index: -1; background: transparent; transition: background 0.3s ease; pointer-events: none; }
+.site-header.solid::before { background: rgba(246, 242, 234, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.site-header.solid { box-shadow: 0 1px 0 var(--line); }
+.site-header { isolation: isolate; }
 .header-inner { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .wordmark { display: flex; flex-direction: column; text-decoration: none; line-height: 1; }
 .wordmark-main { font-weight: 600; letter-spacing: 0.32em; font-size: 1.3rem; }
@@ -130,7 +134,7 @@ h1 em, h2 em { font-size: 1.12em; }
 .menu-btn { background: none; border: 0; padding: 8px; cursor: pointer; display: grid; place-items: center; color: inherit; }
 .site-header .btn-small { padding: 9px 18px; }
 
-.mobile-menu { position: fixed; inset: var(--header-h) 0 0 0; background: var(--ivory); color: var(--ink); padding: 24px 24px 40px; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; }
+.mobile-menu { position: fixed; inset: var(--header-h) 0 0 0; height: calc(100dvh - var(--header-h)); z-index: 99; background: var(--ivory); color: var(--ink); padding: 24px 24px 40px; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; }
 .mobile-menu[hidden] { display: none; }
 .mobile-menu nav { display: flex; flex-direction: column; }
 .mobile-menu nav a { font-size: 1.9rem; letter-spacing: -0.02em; padding: 14px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
@@ -141,7 +145,12 @@ h1 em, h2 em { font-size: 1.12em; }
 @media (min-width: 960px) {
   .nav-desktop { display: flex; }
   .menu-btn { display: none; }
+}
+@media (min-width: 1200px) {
   .header-phone { display: inline-flex; }
+}
+@media (min-width: 960px) and (max-width: 1100px) {
+  .nav-desktop { gap: 20px; }
 }
 @media (max-width: 420px) { .site-header .btn-small { display: none; } }
 
